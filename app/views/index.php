@@ -40,9 +40,13 @@
 		<h1>You have arrived.</h1>
 		<p> que pedo</p>
 <<<<<<< HEAD
+<<<<<<< HEAD
 		<p> No truena carnal ;) </p>
 =======
 		
+>>>>>>> origin/master
+=======
+		<p> parrafo de esteban para ver si truena esta madre </p>
 >>>>>>> origin/master
 	</div>
 </body>
