@@ -1,0 +1,181 @@
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<title>Facebook Login JavaScript Example</title>
+<meta charset="UTF-8">
+</head>
+<body>
+<script>
+
+	$(document).ready(function() {
+		$.ajaxSetup({ cache: true });
+		$.getScript('//connect.facebook.net/en_UK/all.js', function(){
+			FB.init({
+				appId: '394938824006318',
+			});     
+			//$('#loginbutton,#feedbutton').removeAttr('disabled');
+			FB.getLoginStatus(function(response) {
+				statusChangeCallback(response);
+			});
+		});
+		$('#logout').hide();
+		$('#start-broadcasting').hide();
+
+		$('#start-broadcasting').click(function(){
+			broadcast();
+		});
+		
+		$('#login').click(function(){
+			FB.login(function(response){
+				if (response.authResponse) 
+				{
+					$('#login').hide();
+					$('#logout').show();
+					testAPI();
+					getPages();
+					$('#start-broadcasting').show();
+				} 
+				else
+				{
+					console.log('Authorization failed.');
+				}
+			},{scope: 'manage_pages, publish_actions'});
+		});
+		
+		$('#logout').click(function(){
+			FB.logout(function(){
+				document.location.reload();
+			});
+		});
+	});
+	
+	function statusChangeCallback(response) {
+		console.log('statusChangeCallback');
+		console.log(response);
+		if (response.status === 'connected') {
+		  // Logged into your app and Facebook.
+			$('#login').hide();
+			testAPI();
+			getPages();
+			$('#logout').show();
+			$('#start-broadcasting').show();
+		} else if (response.status === 'not_authorized') {
+		  // The person is logged into Facebook, but not your app.
+		  document.getElementById('status').innerHTML = 'Please log ' +
+			'into this app.';
+		} else {
+		  // The person is not logged into Facebook, so we're not sure if
+		  // they are logged into this app or not.
+		  document.getElementById('status').innerHTML = 'Please log ' +
+			'into Facebook.';
+		}
+	}
+
+	function testAPI() {
+		console.log('Welcome!  Fetching your information.... ');
+		FB.api('/me', function(response) {
+			//alert(response.id);
+		  console.log('Successful login for: ' + response.name);
+		  document.getElementById('status').innerHTML =
+			'Thanks for logging in, ' + response.name + '!';
+			
+		});
+	}
+	
+	function getPages() {
+		FB.api('/me/accounts', function(response) {
+			var l = response.data.length;
+			var pages = "Pages: <br>";
+		
+			for(var i = 0; i < l; i++)
+			{
+				pages += "<input type='radio' name='page' value='" + response.data[i].id + "'>";
+				pages += response.data[i].name + "<br>";// + "<br>ID: " + response.data[i].id + "<br>";
+			}
+			$('#user').html(pages);
+ 
+        });
+	}
+	
+	function broadcast(){
+		var selectedPage = "";
+		var selected = $("input[type='radio'][name='page']:checked");
+		if (selected.length > 0) {
+			selectedPage = selected.val();
+		}
+		else
+		{
+			alert('choose a page first');
+			return;
+		}
+		
+		var newURL = selectedPage + '/tagged';
+		console.log("new url " + newURL);
+		
+		FB.api(newURL, function(responsePage){
+			var postTotales = responsePage.data.length;
+			for (var j = 0; j < postTotales; j++)
+			{
+				var postMessage = responsePage.data[j].message;
+				if(postMessage.charAt(0) == '%')
+				{
+					var post1 = responsePage.data[j].id;
+					// add song to playlist (post message)
+					FB.api(post1, "DELETE", function(responseDeletePost){
+						if(responseDeletePost.success)
+						{
+							console.log("post borrado: " + postMessage);
+						}
+					});
+				}
+				else
+				{
+					console.log("post no borrado: "+postMessage);
+				}
+				//pages += "id: " + responsePage.data[j].id + "<br>From: " + responsePage.data[j].from.name + "<br>Message: " + responsePage.data[j].message;
+			}
+			//$('#user').html(pages);
+		});
+	}
+	
+</script>
+
+<button id="login">Inicia sesion con Facebook
+</button>
+
+<button id="logout">Cerrar sesion
+</button>
+
+<div id="status">
+</div>
+
+<div id="user">
+</div>
+
+<div id="start-broadcasting">
+	<button id="start-button">
+		Start Broadcasting
+	</button>
+</div>
+
+<?php
+	require_once('facebook-php-sdk/autoload.php');
+	use Facebook\FacebookJavaScriptLoginHelper;
+	use Facebook\FacebookSession;
+	
+	FacebookSession::setDefaultApplication('394938824006318', '79571c1e0cac7ba3492d8f6c45cc20f7');
+	$helper = new FacebookJavaScriptLoginHelper();
+	try {
+	  $session = $helper->getSession();
+	} catch(FacebookRequestException $ex) {
+
+	} catch(\Exception $ex) {
+
+	}
+	if ($session) {
+		//var_dump($session);
+		echo $session->getUserId();
+	  // Logged in
+	}
+?>
+</body>
+</html>
