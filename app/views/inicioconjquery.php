@@ -61,8 +61,10 @@
 			$.ajax({
 					type: "POST",
                     url: "/spotifyLogin",
-                    success: function(reponse){
-                    	alert(response.d);
+                    success: function(response){
+                    	//var message = $.parseJSON(response);
+                    	//alert(message.name);
+                    	alert(response['name']);
                     },
                     failure: function (response) {
                         alert(response.d);

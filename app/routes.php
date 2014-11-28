@@ -19,3 +19,5 @@ Route::get('/login', function()
 {
 	return View::make('inicioconjquery');
 });
+
+Route::post('/spotifyLogin','SpotifyController@login');
