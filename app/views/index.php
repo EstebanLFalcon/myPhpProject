@@ -47,7 +47,11 @@
 >>>>>>> origin/master
 =======
 		<p> parrafo de esteban para ver si truena esta madre </p>
+<<<<<<< HEAD
 >>>>>>> origin/master
+=======
+		a ver si sale mi cambio
+>>>>>>> 14fd56f4f04aa8ec6dfefad8f6fd6a8b0d9cb5ca
 	</div>
 </body>
 </html>
