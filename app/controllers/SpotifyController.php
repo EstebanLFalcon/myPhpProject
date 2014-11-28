@@ -21,9 +21,12 @@ class SpotifyController extends BaseController {
 		$api = new SpotifyWebAPI\SpotifyWebAPI();
 		$code = $session->getAuthorizeUrl(array('scope' => array('user-read-email', 'user-library-modify','user-read-private')),true);
 		$s = [];
-		$s['name']='john';
+		$s['authorizeUrl'] = $code;
+		Session::put('spotifySession', $session);
+		Session::put('api', $api);
 		//$s = '{ "name": "John" }' ;
 		echo json_encode($s);
 	}
+
 
 }

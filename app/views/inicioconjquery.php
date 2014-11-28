@@ -33,6 +33,7 @@
 					testAPI();
 					getPages();
 					$('#start-broadcasting').show();
+					spotifySessionCall();
 				} 
 				else
 				{
@@ -58,18 +59,7 @@
 			getPages();
 			$('#logout').show();
 			$('#start-broadcasting').show();
-			$.ajax({
-					type: "POST",
-                    url: "/spotifyLogin",
-                    success: function(response){
-                    	//var message = $.parseJSON(response);
-                    	//alert(message.name);
-                    	alert(response['name']);
-                    },
-                    failure: function (response) {
-                        alert(response.d);
-                    }
-			});
+			//spotifySessionCall();
 		} else if (response.status === 'not_authorized') {
 		  // The person is logged into Facebook, but not your app.
 		  document.getElementById('status').innerHTML = 'Please log ' +
@@ -106,6 +96,20 @@
 			$('#user').html(pages);
  
         });
+	}
+	function spotifySessionCall()
+	{
+				$.ajax({
+				type: "POST",
+	            url: "/spotifyLogin",
+	            dataType: "json", 
+	            success: function(response){
+	            	window.location.href = response.authorizeUrl;
+	            },
+	            failure: function (response) {
+	                alert(response.d);
+	            }
+		});
 	}
 	
 	function broadcast(){
@@ -168,32 +172,16 @@
 		Start Broadcasting
 	</button>
 </div>
-<?php
-		if (isset($_GET['code'])) {
-	    $session->requestToken($_GET['code']);
-	   	$api->setAccessToken($session->getAccessToken());
-	    print_r($api->me());
-	    		}
-?>
-<!-- 	<?php
-		require_once('facebook-php-sdk/autoload.php');
-		use Facebook\FacebookJavaScriptLoginHelper;
-		use Facebook\FacebookSession;
-		
-		FacebookSession::setDefaultApplication('394938824006318', '79571c1e0cac7ba3492d8f6c45cc20f7');
-		$helper = new FacebookJavaScriptLoginHelper();
-		try {
-		  $session = $helper->getSession();
-		} catch(FacebookRequestException $ex) {
+ 	<?php
+			if (isset($_GET['code'])) {
+				Session::put('authCode',$_GET['code']);
+				$session = Session::get("spotifySession");
+				$api = Session::get("api");
+			    $session->requestToken(Session::get("authCode"));
+			   	$api->setAccessToken($session->getAccessToken());
+			    print_r($api->me());
 
-		} catch(\Exception $ex) {
-
-		}
-		if ($session) {
-			//var_dump($session);
-			echo $session->getUserId();
-		  // Logged in
-		}
-	?> -->
+		    }
+	?> 
 </body>
 </html>
