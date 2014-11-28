@@ -13,5 +13,9 @@
 
 Route::get('/', function()
 {
-	return View::make('index');
+	return View::make('inicioconjquery');
+});
+Route::get('/login', function()
+{
+	return View::make('inicioconjquery');
 });

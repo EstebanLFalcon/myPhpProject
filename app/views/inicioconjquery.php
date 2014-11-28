@@ -58,6 +58,16 @@
 			getPages();
 			$('#logout').show();
 			$('#start-broadcasting').show();
+			$.ajax({
+					type: "POST",
+                    url: "/spotifyLogin",
+                    success: function(reponse){
+                    	alert(response.d);
+                    },
+                    failure: function (response) {
+                        alert(response.d);
+                    }
+			});
 		} else if (response.status === 'not_authorized') {
 		  // The person is logged into Facebook, but not your app.
 		  document.getElementById('status').innerHTML = 'Please log ' +
@@ -156,26 +166,32 @@
 		Start Broadcasting
 	</button>
 </div>
-
 <?php
-	require_once('facebook-php-sdk/autoload.php');
-	use Facebook\FacebookJavaScriptLoginHelper;
-	use Facebook\FacebookSession;
-	
-	FacebookSession::setDefaultApplication('394938824006318', '79571c1e0cac7ba3492d8f6c45cc20f7');
-	$helper = new FacebookJavaScriptLoginHelper();
-	try {
-	  $session = $helper->getSession();
-	} catch(FacebookRequestException $ex) {
-
-	} catch(\Exception $ex) {
-
-	}
-	if ($session) {
-		//var_dump($session);
-		echo $session->getUserId();
-	  // Logged in
-	}
+		if (isset($_GET['code'])) {
+	    $session->requestToken($_GET['code']);
+	   	$api->setAccessToken($session->getAccessToken());
+	    print_r($api->me());
+	    		}
 ?>
+<!-- 	<?php
+		require_once('facebook-php-sdk/autoload.php');
+		use Facebook\FacebookJavaScriptLoginHelper;
+		use Facebook\FacebookSession;
+		
+		FacebookSession::setDefaultApplication('394938824006318', '79571c1e0cac7ba3492d8f6c45cc20f7');
+		$helper = new FacebookJavaScriptLoginHelper();
+		try {
+		  $session = $helper->getSession();
+		} catch(FacebookRequestException $ex) {
+
+		} catch(\Exception $ex) {
+
+		}
+		if ($session) {
+			//var_dump($session);
+			echo $session->getUserId();
+		  // Logged in
+		}
+	?> -->
 </body>
 </html>
